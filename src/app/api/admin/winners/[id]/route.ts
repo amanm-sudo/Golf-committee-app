@@ -11,7 +11,7 @@ async function checkAdmin(supabase: Awaited<ReturnType<typeof createClient>>) {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createClient();
   const admin = await checkAdmin(supabase);
@@ -30,10 +30,12 @@ export async function PATCH(
     reviewed_by: (await supabase.auth.getUser()).data.user?.id,
   };
 
+  const resolvedParams = await params;
+
   const { error } = await supabase
     .from("winners")
     .update(updates)
-    .eq("id", params.id);
+    .eq("id", resolvedParams.id);
 
   if (error) return new NextResponse(error.message, { status: 500 });
   return NextResponse.json({ success: true });
