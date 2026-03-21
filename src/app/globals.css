@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #fbf9f6;
+    --primary: #012d1d;
+    --primary-container: #1b4332;
+    --secondary: #d4af37;
+    --surface-container-low: #f5f3f0;
+    --surface-container-highest: #e4e2df;
+    --outline-variant: #c1c8c2;
+  }
+
+  body {
+    @apply bg-background text-primary selection:bg-secondary/30;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif italic tracking-tighter;
+  }
+
+  p {
+    @apply font-sans;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply rounded-full bg-primary text-white py-4 px-8 font-sans font-bold transition-all hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply rounded-full bg-secondary text-white py-4 px-8 font-sans font-bold transition-all hover:bg-secondary/90 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply font-sans font-bold uppercase tracking-widest text-sm border-b-2 border-secondary/0 hover:border-secondary transition-all;
+  }
+
+  .card {
+    @apply rounded-lg bg-surface-container-lowest transition-all hover:shadow-xl hover:shadow-primary/5;
+  }
+
+  .section {
+    @apply bg-surface-container-low py-20;
+  }
+
+  .input-fairway {
+    @apply bg-transparent outline-none border-b-2 border-outline-variant focus:border-secondary transition-all py-2 font-sans;
+  }
+}
+
+/* Animations from the design system */
+.score-slide-in {
+  animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.score-slide-out {
+  animation: slideOutLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
