@@ -35,6 +35,7 @@ export default function UserDashboard() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -57,6 +58,20 @@ export default function UserDashboard() {
     setIsSigningOut(true);
     await supabase.auth.signOut();
     router.push("/login");
+  }
+
+  async function handleCancelSubscription() {
+    if (!confirm("Are you sure? Your access will remain active until the end of the current billing period.")) return;
+    setIsCancelling(true);
+    const res = await fetch("/api/user/cancel-subscription", { method: "POST" });
+    if (res.ok) {
+      setSubscription(prev => prev ? { ...prev, cancel_at_period_end: true } : prev);
+      alert("Your subscription has been scheduled for cancellation at the end of the billing period.");
+    } else {
+      const text = await res.text();
+      alert("Error: " + text);
+    }
+    setIsCancelling(false);
   }
 
   const sidebarLinks = [
@@ -245,10 +260,27 @@ export default function UserDashboard() {
 
             {activeTab === "draws" && (
               <div className="animate-in fade-in duration-500">
-                <Card variant="low" className="p-8 md:p-16 text-center">
-                  <Trophy className="h-12 w-12 md:h-16 md:w-16 text-secondary/30 mx-auto mb-6" strokeWidth={1} />
-                  <h3 className="text-2xl md:text-3xl font-serif italic mb-4">Draw Results</h3>
-                  <p className="text-primary/60 font-sans">Draw results for the current cycle will appear here after the monthly draw is published.</p>
+                <Card variant="low" className="p-8 md:p-16">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-12">
+                    <div>
+                      <Trophy className="h-8 w-8 md:h-10 md:w-10 text-secondary/60 mb-4" strokeWidth={1} />
+                      <h3 className="text-2xl md:text-3xl font-serif italic mb-2">Draw Results</h3>
+                      <p className="text-primary/60 font-sans text-sm">Results are published by the admin at the end of each monthly cycle.</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-1">Next Draw</p>
+                      <p className="font-serif italic text-xl font-black">Last day of the month</p>
+                    </div>
+                  </div>
+                  <div className="p-6 bg-surface-container-highest rounded-lg border border-primary/5">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-2">How Draws Work</p>
+                    <ul className="text-sm text-primary/60 font-sans space-y-2">
+                      <li>• You must have <strong>5 verified Stableford scores</strong> to be eligible.</li>
+                      <li>• 5 winning numbers from 1–45 are drawn each month.</li>
+                      <li>• Match 3 = 25% pool · Match 4 = 35% pool · Match 5 = 40% Jackpot.</li>
+                      <li>• Jackpot rolls over if unclaimed.</li>
+                    </ul>
+                  </div>
                 </Card>
               </div>
             )}
@@ -286,9 +318,24 @@ export default function UserDashboard() {
                       <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-2">Subscription Status</p>
                       <p className={`font-sans font-bold capitalize ${subscription?.status === "active" ? "text-emerald-600" : "text-red-500"}`}>
                         {subscription?.status || "None"}
+                        {subscription?.cancel_at_period_end && <span className="text-amber-500 ml-2">(Cancels on {periodEnd})</span>}
                       </p>
                     </div>
-                    <div className="pt-6 border-t border-primary/5">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-2">Renewal Date</p>
+                      <p className="font-sans font-bold">{periodEnd || "—"}</p>
+                    </div>
+                    <div className="pt-6 border-t border-primary/5 flex flex-col gap-4">
+                      {subscription?.status === "active" && !subscription?.cancel_at_period_end && (
+                        <button
+                          onClick={handleCancelSubscription}
+                          disabled={isCancelling}
+                          className="text-sm font-bold uppercase tracking-widest text-amber-600/70 hover:text-amber-600 transition-all flex items-center gap-2"
+                        >
+                          {isCancelling ? <Loader2 className="h-4 w-4 animate-spin" /> : <AlertCircle className="h-4 w-4" />}
+                          {isCancelling ? "Processing..." : "Cancel Subscription"}
+                        </button>
+                      )}
                       <button
                         onClick={handleSignOut}
                         disabled={isSigningOut}

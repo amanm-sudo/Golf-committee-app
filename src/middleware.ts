@@ -70,7 +70,6 @@ export async function middleware(request: NextRequest) {
     .eq("id", user.id)
     .single();
 
-  console.log(">>> MIDDLEWARE DEBUG: User email:", user.email, "Profile:", profile, "ProfileError:", profileError);
 
   const { data: subscription } = await supabaseAdmin
     .from("subscriptions")

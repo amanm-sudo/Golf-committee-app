@@ -47,9 +47,9 @@ const steps = [
 ];
 
 const prizeStructure = [
-  { tier: "5-Score Match", prize: "60% of pool", odds: "Jackpot", color: "border-secondary bg-secondary/5" },
-  { tier: "4-Score Match", prize: "25% of pool", odds: "1 in ~12", color: "border-primary bg-primary/5" },
-  { tier: "3-Score Match", prize: "15% of pool", odds: "1 in ~4", color: "border-primary/40 bg-primary/5" },
+  { tier: "5-Score Match", prize: "40% of pool", odds: "Jackpot (Rolls over)", color: "border-secondary bg-secondary/5" },
+  { tier: "4-Score Match", prize: "35% of pool", odds: "1 in ~12", color: "border-primary bg-primary/5" },
+  { tier: "3-Score Match", prize: "25% of pool", odds: "1 in ~4", color: "border-primary/40 bg-primary/5" },
 ];
 
 export default function HowItWorksPage() {

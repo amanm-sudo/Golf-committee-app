@@ -28,7 +28,7 @@ export default function StatGrid() {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-8 mb-12">
+    <div className="grid grid-cols-2 xl:grid-cols-4 gap-6 md:gap-8 mb-12">
       {statConfig.map((s, index) => (
         <Card key={index} variant="low" className="p-8 group hover:border-secondary transition-all relative overflow-hidden">
             <div className={`absolute top-0 right-0 p-8 z-0 pointer-events-none ${s.color}`}>
