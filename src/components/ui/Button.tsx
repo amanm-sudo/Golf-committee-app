@@ -8,7 +8,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "outline";
   size?: "sm" | "md" | "lg";
   asChild?: boolean;
@@ -70,23 +70,31 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       transition: "transform 0.1s ease-out" 
     };
 
-    const Component = asChild ? "div" : ("button" as any);
     const isGhost = variant === "ghost";
+
+    const ghostClass = cn(
+      "inline-flex items-center justify-center font-sans font-bold uppercase tracking-widest text-sm",
+      "border-b-2 border-transparent hover:border-secondary text-primary transition-all bg-transparent whitespace-nowrap outline-none cursor-pointer",
+      className
+    );
 
     // Exception for Ghost buttons to stay clean and flat without animations
     if (isGhost) {
+      if (asChild && React.isValidElement(children)) {
+        return React.cloneElement(children as React.ReactElement<any>, {
+          ref: setRefs,
+          ...props,
+          className: cn(ghostClass, (children as React.ReactElement<any>).props.className),
+        });
+      }
       return (
-        <Component
+        <button
           ref={setRefs}
-          className={cn(
-            "inline-flex items-center justify-center font-sans font-bold uppercase tracking-widest text-sm",
-            "border-b-2 border-transparent hover:border-secondary text-primary transition-all bg-transparent whitespace-nowrap",
-            className
-          )}
+          className={ghostClass}
           {...props}
         >
           {children}
-        </Component>
+        </button>
       );
     }
 
@@ -103,21 +111,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: "py-5 px-12 text-base",
     };
 
-    return (
-      <Component
-        ref={setRefs}
-        onMouseMove={updateEyes}
-        onTouchMove={updateEyes}
-        onMouseLeave={resetEyes}
-        className={cn(
-          "group relative inline-flex items-center justify-center whitespace-nowrap overflow-visible font-sans font-bold",
-          "rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed outline-none",
-          "bg-slate-950 border-[3px] border-slate-950", // Exactly forms the black base layer
-          sizes[size],
-          className
-        )}
-        {...props}
-      >
+    const baseClass = cn(
+      "group relative inline-flex items-center justify-center whitespace-nowrap overflow-visible font-sans font-bold",
+      "rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed outline-none cursor-pointer",
+      "bg-slate-950 border-[3px] border-slate-950", // Exactly forms the black base layer
+      sizes[size],
+      className
+    );
+
+    const innerContent = (childContent: React.ReactNode) => (
+      <>
         <style>
           {`
             @keyframes cb-eye-blink {
@@ -147,7 +150,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         {/* 1. Invisible spacer dictating the exact width & height of the base button */}
         <span className="opacity-0 pointer-events-none flex items-center justify-center gap-2">
-          {children}
+          {childContent}
         </span>
 
         {/* 2. Hidden eyes resting on the right side of the black track */}
@@ -164,14 +167,42 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         <span 
           className={cn(
             "absolute -inset-[3px] z-10 flex w-[calc(100%+6px)] h-[calc(100%+6px)] items-center justify-center gap-2 rounded-full border-[3px]",
-            "origin-[1.25em_50%] transition-transform duration-300 ease-[cubic-bezier(0.65,0,0.35,1.2)]",
+            "origin-[1.25em_50%] transition-transform duration-300 ease-[cubic-bezier(0.65,0,0.35,1.2)] pointer-events-none",
             coverVariants[variant],
             "group-hover:-rotate-[8deg] group-active:rotate-0"
           )}
         >
-          {children}
+          {childContent}
         </span>
-      </Component>
+        
+        {/* 4. Invisible hit area expander to stabilize hover and clickability */}
+        <span className="absolute -inset-[12px] z-20 rounded-full" aria-hidden="true" />
+      </>
+    );
+
+    if (asChild && React.isValidElement(children)) {
+      return React.cloneElement(children as React.ReactElement<any>, {
+        ref: setRefs,
+        onMouseMove: updateEyes,
+        onTouchMove: updateEyes,
+        onMouseLeave: resetEyes,
+        ...props,
+        className: cn(baseClass, (children as React.ReactElement<any>).props.className),
+        children: innerContent((children as React.ReactElement<any>).props.children)
+      });
+    }
+
+    return (
+      <button
+        ref={setRefs}
+        onMouseMove={updateEyes}
+        onTouchMove={updateEyes}
+        onMouseLeave={resetEyes}
+        className={baseClass}
+        {...props}
+      >
+        {innerContent(children)}
+      </button>
     );
   }
 );
