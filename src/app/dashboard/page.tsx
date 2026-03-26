@@ -77,9 +77,9 @@ export default function UserDashboard() {
     : null;
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden selection:bg-secondary/20 font-sans">
-      {/* User Sidebar */}
-      <aside className="w-80 bg-surface-container-low flex flex-col justify-between py-12 px-8 border-r border-primary/5">
+    <div className="flex flex-col md:flex-row h-screen bg-background overflow-hidden selection:bg-secondary/20 font-sans">
+      {/* User Sidebar (Desktop) */}
+      <aside className="hidden md:flex w-80 bg-surface-container-low flex-col justify-between py-12 px-8 border-r border-primary/5 relative z-20">
         <div>
           <div className="mb-20">
             <Link href="/">
@@ -123,8 +123,32 @@ export default function UserDashboard() {
         </div>
       </aside>
 
+      {/* Mobile Top Header */}
+      <div className="md:hidden bg-surface-container-low border-b border-primary/5 px-6 py-4 flex justify-between items-center z-40 shadow-sm relative">
+        <Link href="/">
+          <h1 className="text-xl font-serif font-black italic tracking-tighter text-primary leading-none">Digital Heroes</h1>
+        </Link>
+        <div className="bg-primary text-secondary px-3 py-1.5 rounded-md text-[9px] font-bold tracking-widest uppercase flex items-center gap-1.5">
+          <Trophy className="h-3 w-3" /> ₹24,500
+        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 w-full bg-surface-container-low border-t border-primary/5 flex justify-around p-2 z-50 bg-white/95 backdrop-blur-md safe-area-pb">
+        {sidebarLinks.map((link) => (
+          <button
+            key={link.id}
+            onClick={() => setActiveTab(link.id)}
+            className={`flex flex-col items-center justify-center p-2 rounded-lg min-w-[64px] ${activeTab === link.id ? "text-secondary font-bold" : "text-primary/40 hover:text-primary transition-colors"}`}
+          >
+            <link.icon className="h-5 w-5 mb-1" />
+            <span className="text-[8px] uppercase tracking-wider">{link.label}</span>
+          </button>
+        ))}
+      </nav>
+
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto px-16 py-12 custom-scrollbar">
+      <main className="flex-1 overflow-y-auto px-6 md:px-16 py-8 md:py-12 pb-28 md:pb-12 custom-scrollbar">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -134,9 +158,9 @@ export default function UserDashboard() {
           </div>
         ) : (
           <>
-            <header className="mb-12 flex justify-between items-end">
+            <header className="mb-8 md:mb-12 flex flex-col md:flex-row gap-6 md:justify-between md:items-end">
               <div>
-                <h2 className="text-5xl font-serif font-black italic mb-2 tracking-tighter">
+                <h2 className="text-4xl md:text-5xl font-serif font-black italic mb-2 tracking-tighter">
                   Welcome Back, {firstName}.
                 </h2>
                 <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary/40">
@@ -146,7 +170,7 @@ export default function UserDashboard() {
                 </p>
               </div>
               <div className="flex gap-4">
-                <button className="bg-white border border-primary/5 rounded-full px-8 py-4 text-sm font-bold uppercase tracking-widest hover:border-primary/20 transition-all shadow-sm">
+                <button className="bg-white border border-primary/5 rounded-full px-6 md:px-8 py-3 md:py-4 text-xs md:text-sm font-bold uppercase tracking-widest hover:border-primary/20 transition-all shadow-sm w-full md:w-auto">
                   Help & Support
                 </button>
               </div>
@@ -154,30 +178,30 @@ export default function UserDashboard() {
 
             {/* No subscription banner */}
             {!subscription && (
-              <Card variant="low" className="mb-8 p-8 border-l-4 border-secondary flex items-center gap-6">
+              <Card variant="low" className="mb-8 p-6 md:p-8 border-l-4 border-secondary flex flex-col md:flex-row items-start md:items-center gap-6">
                 <AlertCircle className="h-8 w-8 text-secondary flex-shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-serif italic text-xl mb-1">No Active Subscription</h3>
                   <p className="text-primary/60 font-sans text-sm">Subscribe to a plan to become eligible for the monthly prize draw.</p>
                 </div>
-                <Button asChild>
+                <Button asChild className="w-full md:w-auto">
                   <Link href="/pricing">Choose a Plan <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               </Card>
             )}
 
             {activeTab === "overview" && (
-              <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 flex flex-col gap-12">
-                <div className="grid grid-cols-12 gap-12">
-                  <div className="col-span-8">
+              <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 flex flex-col gap-8 md:gap-12">
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 md:gap-12">
+                  <div className="col-span-1 xl:col-span-8">
                     <ScoreBoard />
                   </div>
-                  <div className="col-span-4">
+                  <div className="col-span-1 xl:col-span-4 flex flex-col min-h-full">
                     <CharityWidget />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                   <Card variant="low" className="p-8 border-t-4 border-secondary">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-4">Subscription Plan</p>
                     <h4 className="text-2xl font-serif italic mb-2">{subscriptionLabel || "No Plan"}</h4>
@@ -220,9 +244,9 @@ export default function UserDashboard() {
 
             {activeTab === "draws" && (
               <div className="animate-in fade-in duration-500">
-                <Card variant="low" className="p-16 text-center">
-                  <Trophy className="h-16 w-16 text-secondary/30 mx-auto mb-6" strokeWidth={1} />
-                  <h3 className="text-3xl font-serif italic mb-4">Draw Results</h3>
+                <Card variant="low" className="p-8 md:p-16 text-center">
+                  <Trophy className="h-12 w-12 md:h-16 md:w-16 text-secondary/30 mx-auto mb-6" strokeWidth={1} />
+                  <h3 className="text-2xl md:text-3xl font-serif italic mb-4">Draw Results</h3>
                   <p className="text-primary/60 font-sans">Draw results for the current cycle will appear here after the monthly draw is published.</p>
                 </Card>
               </div>
@@ -236,18 +260,18 @@ export default function UserDashboard() {
 
             {activeTab === "history" && (
               <div className="animate-in fade-in duration-500">
-                <Card variant="low" className="p-16 text-center">
-                  <History className="h-16 w-16 text-secondary/30 mx-auto mb-6" strokeWidth={1} />
-                  <h3 className="text-3xl font-serif italic mb-4">Win History</h3>
+                <Card variant="low" className="p-8 md:p-16 text-center">
+                  <History className="h-12 w-12 md:h-16 md:w-16 text-secondary/30 mx-auto mb-6" strokeWidth={1} />
+                  <h3 className="text-2xl md:text-3xl font-serif italic mb-4">Win History</h3>
                   <p className="text-primary/60 font-sans">Your previous draw wins will appear here once results are published.</p>
                 </Card>
               </div>
             )}
 
             {activeTab === "settings" && (
-              <div className="animate-in fade-in duration-500 max-w-2xl">
-                <Card variant="low" className="p-10">
-                  <h3 className="text-3xl font-serif italic mb-8">Account Settings</h3>
+              <div className="animate-in fade-in duration-500 max-w-2xl mx-auto md:mx-0">
+                <Card variant="low" className="p-6 md:p-10">
+                  <h3 className="text-2xl md:text-3xl font-serif italic mb-6 md:mb-8">Account Settings</h3>
                   <div className="space-y-6">
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-2">Full Name</p>
