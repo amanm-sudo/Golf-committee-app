@@ -14,11 +14,13 @@
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.3",
+    "@types/nodemailer": "^7.0.11",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.577.0",
     "next": "^16.2.0",
+    "nodemailer": "^8.0.4",
     "razorpay": "^2.9.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
