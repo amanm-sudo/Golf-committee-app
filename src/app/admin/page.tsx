@@ -4,7 +4,9 @@ import { useState } from "react";
 import StatGrid from "@/components/admin/StatGrid";
 import DrawManager from "@/components/admin/DrawManager";
 import WinnerReview from "@/components/admin/WinnerReview";
-import { Users, LayoutDashboard, Trophy, Settings, BarChart, ShieldAlert } from "lucide-react";
+import UserManagement from "@/components/admin/UserManagement";
+import CharityManagement from "@/components/admin/CharityManagement";
+import { Users, LayoutDashboard, Trophy, Settings, BarChart, ShieldAlert, Heart } from "lucide-react";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -14,6 +16,7 @@ export default function AdminDashboard() {
     { id: "draws", label: "Draw Manager", icon: Trophy },
     { id: "winners", label: "Winner Reviews", icon: ShieldAlert },
     { id: "users", label: "User Management", icon: Users },
+    { id: "charities", label: "Charity Control", icon: Heart },
     { id: "reports", label: "Analytics & Reports", icon: BarChart },
   ];
 
@@ -87,6 +90,7 @@ export default function AdminDashboard() {
                    {activeTab === "draws" && "Draw Operations"}
                    {activeTab === "winners" && "Integrity Check"}
                    {activeTab === "users" && "User Directory"}
+                   {activeTab === "charities" && "Philanthropy Partners"}
                    {activeTab === "reports" && "Financial Intelligence"}
                 </h2>
                 <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary/40">Secure Session · Region: EMEA-1 · Status: Active</p>
@@ -114,7 +118,9 @@ export default function AdminDashboard() {
         {/* Other Tab Views can be implemented here */}
         {activeTab === "draws" && <div className="max-w-4xl"><DrawManager /></div>}
         {activeTab === "winners" && <WinnerReview />}
-        {(activeTab === "users" || activeTab === "reports") && (
+        {activeTab === "users" && <div className="max-w-4xl"><UserManagement /></div>}
+        {activeTab === "charities" && <div className="max-w-4xl"><CharityManagement /></div>}
+        {activeTab === "reports" && (
             <div className="py-40 text-center opacity-20 uppercase tracking-[1em] text-sm animate-pulse">
                 Access Restricted · Module Offline
             </div>

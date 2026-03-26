@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import ScoreBoard from "@/components/dashboard/ScoreBoard";
 import CharityWidget from "@/components/dashboard/CharityWidget";
+import WinHistory from "@/components/dashboard/WinHistory";
 import { LayoutDashboard, Trophy, Heart, Settings, History, LogOut, Loader2, AlertCircle, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -260,11 +261,7 @@ export default function UserDashboard() {
 
             {activeTab === "history" && (
               <div className="animate-in fade-in duration-500">
-                <Card variant="low" className="p-8 md:p-16 text-center">
-                  <History className="h-12 w-12 md:h-16 md:w-16 text-secondary/30 mx-auto mb-6" strokeWidth={1} />
-                  <h3 className="text-2xl md:text-3xl font-serif italic mb-4">Win History</h3>
-                  <p className="text-primary/60 font-sans">Your previous draw wins will appear here once results are published.</p>
-                </Card>
+                <WinHistory />
               </div>
             )}
 

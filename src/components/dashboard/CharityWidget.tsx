@@ -83,7 +83,7 @@ export default function CharityWidget() {
         </div>
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col gap-4">
         <div className="flex items-center justify-between pt-6 border-t border-primary/5">
             <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-1">Total Contributed to date</p>
@@ -94,6 +94,9 @@ export default function CharityWidget() {
                 <p className="text-sm font-bold uppercase">Heritage Member</p>
             </div>
         </div>
+        <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => alert("Processing independent donation via Razorpay...")}>
+            Make Independent Donation
+        </Button>
       </div>
     </Card>
   );
