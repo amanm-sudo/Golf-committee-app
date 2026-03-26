@@ -36,7 +36,14 @@ export default function SignupPage() {
       setError(signupError.message);
       setIsLoading(false);
     } else {
-      // Signup successful -> redirect to charity selection or email confirmation screen
+      // Send welcome email quietly in the background
+      await fetch("/api/auth/welcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name: fullName }),
+      }).catch(err => console.error("Failed to trigger welcome email:", err));
+
+      // Signup successful -> redirect to success screen
       router.push("/signup/success");
     }
   }

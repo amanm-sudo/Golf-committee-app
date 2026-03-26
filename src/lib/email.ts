@@ -139,3 +139,31 @@ export async function sendSubscriptionCancellationEmail(
     console.error("[Email] Failed to send cancellation email:", error);
   }
 }
+
+export async function sendWelcomeEmail(email: string, name: string) {
+  if (!isEmailConfigured()) {
+    console.warn("[Email] Gmail not configured. Skipping welcome email to:", email);
+    return;
+  }
+
+  const transporter = getTransporter();
+
+  try {
+    await transporter.sendMail({
+      from: `"Digital Heroes" <${process.env.GMAIL_USER}>`,
+      to: email,
+      subject: "Welcome to Digital Heroes! ⛳",
+      html: wrapEmail(`
+        <h2 style="color: #012d1d; margin-bottom: 8px;">Welcome to the Fairway, ${name}!</h2>
+        <p style="color: #444;">We are thrilled to welcome you to the Digital Heroes platform.</p>
+        <p style="color: #444;">Your account has been successfully created. You can now log in, view our charity partners, and choose a subscription plan when you're ready to start entering the monthly prize draws.</p>
+        <a href="${APP_URL}/pricing" style="display: inline-block; background: #012d1d; color: white; padding: 14px 32px; border-radius: 999px; text-decoration: none; font-weight: bold; font-size: 14px; margin-top: 16px; letter-spacing: 0.05em;">
+          Explore Membership Plans →
+        </a>
+      `),
+    });
+    console.log("[Email] Welcome email sent to:", email);
+  } catch (error) {
+    console.error("[Email] Failed to send welcome email:", error);
+  }
+}
